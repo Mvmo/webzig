@@ -1,19 +1,24 @@
 const std = @import("std");
-const StreamServer = std.net.StreamServer;
-const Address = std.net.Address;
+const network = @import("zig-network");
 
 pub fn main() anyerror!void {
     std.debug.warn("All your codebase are belong to us.\n", .{});
+
+    try echo();
 }
 
-pub fn listen(server: *StreamServer, address: Address) !void {
-    server.deinit();
-    server.listen(address) catch |err| switch (err) {
-        error.AddressInUse,
-        error.AddressNotAvailable,
-        => |e| return e,
-        else => return error.ListenError,
-    };
+pub fn echo() !void {
+    try network.init();
+    defer network.deinit();
 
-    
+    const sock = try network.connectToHost(std.heap.page_allocator, "tcpbin.com", 4242, .tcp);
+    defer sock.close();
+
+    const message = "Hello\n";
+    try sock.writer().writeAll(message);
+
+    var buf: [128]u8 = undefined;
+    std.debug.warn("Echo: {}\n", .{
+        buf[0 .. try sock.reader().readAll(buf[0 .. message.len])]
+    });
 }

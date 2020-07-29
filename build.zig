@@ -1,12 +1,18 @@
 const Builder = @import("std").build.Builder;
 
 pub fn build(b: *Builder) void {
-    const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
+    const target = b.standardTargetOptions(.{});
 
     const exe = b.addExecutable("webzig", "src/main.zig");
     exe.setTarget(target);
     exe.setBuildMode(mode);
+
+    exe.addPackage(.{
+        .name = "zig-network",
+        .path = "zig-network/network.zig",
+    });
+
     exe.install();
 
     const run_cmd = exe.run();
