@@ -8,11 +8,6 @@ pub fn build(b: *Builder) void {
     exe.setTarget(target);
     exe.setBuildMode(mode);
 
-    exe.addPackage(.{
-        .name = "zig-network",
-        .path = "zig-network/network.zig",
-    });
-
     exe.install();
 
     const run_cmd = exe.run();

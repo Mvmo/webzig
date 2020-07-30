@@ -1,3 +1,0 @@
-[submodule "zig-network"]
-	path = zig-network
-	url = git@github.com:MasterQ32/zig-network.git
