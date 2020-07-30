@@ -1,5 +1,6 @@
 const std = @import("std");
+const net = std.net;
 
-pub fn main() anyerror!void {
-    std.debug.warn("All your codebase are belong to us.\n", .{});
+pub fn main() !void {
+
 }
