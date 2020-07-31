@@ -30,11 +30,11 @@ pub const HttpServer = struct {
         try self.tcpServer.listen();
     }
 
-    fn handleMessage(client: *Client, message: []u8) void {
-        std.debug.warn("Handle incoming message from client\n--- START ---\n{}\n---  END  ---\n", .{message});
+    fn handleMessage(client: *Client, message: *const []u8) void {
+        std.debug.warn("Handle incoming message from client\n--- START ---\n{}\n---  END  ---\n", .{message.*});
 
-        var method = request.getRequestMethod(&message);
-        std.debug.warn("Method: {}\n", .{method});
+        var req = request.Request.parse(message);
+        std.debug.warn("Request: {}\n", .{req});
     }
 
 };

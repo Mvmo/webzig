@@ -8,7 +8,7 @@ const Client = @import("client.zig").Client;
 
 pub const TcpServer = struct {
 
-    const HandlerTypeSignature = fn (client: *Client, message: []u8) void;
+    const HandlerTypeSignature = fn (client: *Client, message: *const []u8) void;
 
     allocator: *mem.Allocator,
     address: net.Address,
@@ -18,7 +18,7 @@ pub const TcpServer = struct {
     pub fn init(allocator: *mem.Allocator) TcpServer {
         return TcpServer {
             .allocator = allocator,
-            .address = net.Address.parseIp4("127.0.0.1", 1889) catch unreachable,
+            .address = net.Address.parseIp4("127.0.0.1", 1888) catch unreachable,
             .stream_server = net.StreamServer.init(net.StreamServer.Options{}),
             .message_handlers = ArrayList(HandlerTypeSignature).init(allocator),
         };

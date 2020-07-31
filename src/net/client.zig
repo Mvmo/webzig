@@ -13,6 +13,6 @@ pub const Client = struct {
         const message = buffer[0 .. bytes_read];
 
         for (server.message_handlers.items) |handler| 
-            handler(self, message);
+            handler(self, &message);
     }
 };
