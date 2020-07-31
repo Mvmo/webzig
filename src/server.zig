@@ -10,7 +10,15 @@ const Client = struct {
     handle_frame: @Frame(handle),
 
     fn handle(self: *Client, server: *Server) !void {
-        _ = try self.context.file.write("server: welcome to the server");
+        var buf: [100]u8 = undefined;
+        const amt = try self.context.file.read(&buf);
+        const msg = buf[0 .. amt];
+
+        std.debug.warn("Incoming Message: \n\n{}\n", .{msg});
+
+        const response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
+
+        _ = try self.context.file.write(response);
     }
 
 };
@@ -35,6 +43,7 @@ const Server = struct {
 
     fn listen(self: *Server) !void {
         try self.stream_server.listen(self.address);
+        defer self.stream_server.deinit();
         while (true) {
             const connection = try self.stream_server.accept();
             const client = try self.allocator.create(Client);
