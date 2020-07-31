@@ -1,1 +1,1 @@
-"# Webzig" 
+# Webzig - Webserver written in Zig
