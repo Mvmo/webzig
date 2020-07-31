@@ -6,6 +6,8 @@ const net = webzig.net;
 const TcpServer = net.server.TcpServer;
 const Client = net.client.Client;
 
+const request = @import("request.zig");
+
 pub const HttpServer = struct {
 
     allocator: *Allocator,
@@ -30,6 +32,9 @@ pub const HttpServer = struct {
 
     fn handleMessage(client: *Client, message: []u8) void {
         std.debug.warn("Handle incoming message from client\n--- START ---\n{}\n---  END  ---\n", .{message});
+
+        var method = request.getRequestMethod(&message);
+        std.debug.warn("Method: {}\n", .{method});
     }
 
 };
