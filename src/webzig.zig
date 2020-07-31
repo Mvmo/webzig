@@ -7,5 +7,7 @@ pub fn main() !void {
     const allocator = std.heap.page_allocator;
     
     var server = http.server.HttpServer.init(allocator);
+    defer server.deinit();
+    
     try server.listen();
 }
