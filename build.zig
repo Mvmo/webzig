@@ -4,7 +4,7 @@ pub fn build(b: *Builder) void {
     const mode = b.standardReleaseOptions();
     const target = b.standardTargetOptions(.{});
 
-    const exe = b.addExecutable("webzig", "src/main.zig");
+    const exe = b.addExecutable("webzig", "src/webzig.zig");
     exe.setTarget(target);
     exe.setBuildMode(mode);
 

@@ -3,38 +3,20 @@ const net = std.net;
 const mem = std.mem;
 
 const ArrayList = std.ArrayList;
-const Connection = net.StreamServer.Connection;
 
-const Client = struct {
-    
-    context: *const Connection,
-    handle_frame: @Frame(handle),
+const Client = @import("client.zig").Client;
 
-    fn handle(self: *Client, server: *Server) !void {
-        var buf: [100]u8 = undefined;
-        const amt = try self.context.file.read(&buf);
-        const msg = buf[0 .. amt];
+pub const TcpServer = struct {
 
-        std.debug.warn("{}\n", .{msg});
-
-        for (server.message_handlers.items) |handler| {
-            handler(self, &msg);
-        }
-    }
-
-};
-
-const Server = struct {
-
-    const HandlerTypeSignature = fn (client: *Client, message: *const []u8) void;
+    const HandlerTypeSignature = fn (client: *Client, message: []u8) void;
 
     allocator: *mem.Allocator,
     address: net.Address,
     stream_server: net.StreamServer,
     message_handlers: ArrayList(HandlerTypeSignature),
 
-    pub fn init(allocator: *mem.Allocator) Server {
-        return Server {
+    pub fn init(allocator: *mem.Allocator) TcpServer {
+        return TcpServer {
             .allocator = allocator,
             .address = net.Address.parseIp4("127.0.0.1", 1889) catch unreachable,
             .stream_server = net.StreamServer.init(net.StreamServer.Options{}),
@@ -42,16 +24,16 @@ const Server = struct {
         };
     }
 
-    fn deinit(self: *Server) void {
+    fn deinit(self: *TcpServer) void {
         self.message_handlers.deinit();
         self.* = undefined;
     }
 
-    fn addHandler(self: *Server, handler_function: HandlerTypeSignature) !void {
+    fn addHandler(self: *TcpServer, handler_function: HandlerTypeSignature) !void {
         try self.message_handlers.append(handler_function);
     }
 
-    fn listen(self: *Server) !void {
+    fn listen(self: *TcpServer) !void {
         try self.stream_server.listen(self.address);
         defer self.stream_server.deinit();
         while (true) {
@@ -67,15 +49,9 @@ const Server = struct {
 
 };
 
-fn test_handler(client: *Client, message: *const []u8) void {
-    const response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 21\n\n<h1>Hello worlg!</h1>";
-
-    _ = client.context.file.write(response) catch unreachable;
-}
-
 test "create server and listen" {
     const allocator = std.heap.page_allocator;
-    var server = Server.init(allocator);
+    var server = TcpServer.init(allocator);
 
     defer server.deinit();
 
