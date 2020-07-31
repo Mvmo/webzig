@@ -18,6 +18,11 @@ pub const HttpServer = struct {
         };
     }
 
+    fn deinit(self: *HttpServer) void {
+        self.tcpServer.deinit();
+        self.* = undefined;
+    }
+
     fn listen(self: *HttpServer) !void {
         try self.tcpServer.addHandler(handleMessage);
         try self.tcpServer.listen();
