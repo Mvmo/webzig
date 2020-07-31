@@ -1,0 +1,3 @@
+[submodule "lib/h11"]
+	path = lib/h11
+	url = git@github.com:ducdetronquito/h11.git
