@@ -7,9 +7,4 @@ test "test the application" {
     var str: []const u8 = "Hello, World!";
     std.debug.warn("{}\n", .{@typeName(@TypeOf(&str))});
 
-    var x = 1;
-    var y = 2;
-
-    y * y * y * y 
-
 }
