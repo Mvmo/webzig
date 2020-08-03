@@ -24,5 +24,5 @@ pub const Response = struct {
 pub const file_not_found = Response {
     .status_code = 404,
     .status_message = "Not Found",
-    .body = @embedFile("../../defaults/404.html"),
+    .body = @embedFile("../../resources/404.html"),
 };
