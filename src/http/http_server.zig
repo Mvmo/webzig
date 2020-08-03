@@ -7,7 +7,8 @@ const TcpServer = net.server.TcpServer;
 const Client = net.client.Client;
 
 const parser = @import("parser/parser.zig");
-const Response = @import("http.zig").Response;
+const response = @import("http.zig").response;
+const Response = response.Response;
 
 const ArrayList = std.ArrayList;
 
@@ -39,44 +40,39 @@ pub const HttpServer = struct {
         var req = parser.request.parse(message) catch unreachable;
         req.print();
 
-        var content = getContent(req.uri) catch unreachable;
-        var msg: []const u8 = "OK";
-
-        var res = Response{
-            .status_code = 200,
-            .status_message = &msg,
-            .body = &content,
-        };
+        var res = getResponse(req.uri);
 
         var response_string = res.asString() catch unreachable;
         _ = client.context.file.write(response_string) catch unreachable;
         client.context.file.close();
     }
 
-    fn getContent(file_path: []const u8) ![]const u8 {
-        const full_path: []const u8 = try std.fmt.allocPrint(std.heap.page_allocator, "www{}", .{file_path});
-        //var full_path: []u8 = std.heap.page_allocator.alloc(u8, "www".len + file_path.len) catch unreachable;
-
-      //  var i: u8 = 0;
-        //while (i < 3) : (i += 1)
-          //  full_path[i] = 'w';
-
-        //for (file_path) |*c, index|
-         //   full_path[3 + index] = file_path[index];
+    fn getResponse(file_path: []const u8) Response {
+        const full_path: []const u8 = std.fmt.allocPrint(std.heap.page_allocator, "www{}", .{file_path}) catch |_| return response.internal_server_error;
 
         std.debug.warn("{}\n", .{full_path});
 
-        const file = try std.fs.cwd().openFile(full_path, .{ .read = true });
+        const working_dir = std.fs.cwd();
+
+        // TODO check error type...
+        const file = working_dir.openFile(full_path, .{ .read = true }) catch |_| return response.file_not_found;
+
         defer file.close();
 
-        var size: usize = try file.getEndPos();
-        var s: []u8 = try std.heap.page_allocator.alloc(u8, size);
+        var size: usize = file.getEndPos() catch |_| return response.internal_server_error;
+        var body_buffer: []u8 = std.heap.page_allocator.alloc(u8, size) catch |_| return response.internal_server_error;
 
-        const bytesRead = try file.read(s);
-        if (bytesRead != size) {
-            return error.BadRequest;
+        const bytes_read = file.read(body_buffer) catch |_| return response.internal_server_error;
+        if (bytes_read != size) {
+            return response.internal_server_error;
         }
 
-        return s;
+        var msg: []const u8 = "OK";
+
+        return Response{
+            .status_code = 200,
+            .status_message = msg,
+            .body = body_buffer,
+        };
     }
 };

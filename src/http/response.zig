@@ -20,3 +20,15 @@ pub const Response = struct {
         });
     }
 };
+
+pub const file_not_found = Response {
+    .status_code = 404,
+    .status_message = "Not Found",
+    .body = @embedFile("../../resources/404.html"),
+};
+
+pub const internal_server_error = Response {
+    .status_code = 500,
+    .status_message = "Internal Server Error",
+    .body = @embedFile("../../resources/500.html"),
+};
