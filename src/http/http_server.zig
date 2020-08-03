@@ -7,7 +7,8 @@ const TcpServer = net.server.TcpServer;
 const Client = net.client.Client;
 
 const parser = @import("parser/parser.zig");
-const Response = @import("http.zig").Response;
+const response = @import("http.zig").response;
+const Response = response.Response;
 
 const ArrayList = std.ArrayList;
 
@@ -39,36 +40,40 @@ pub const HttpServer = struct {
         var req = parser.request.parse(message) catch unreachable;
         req.print();
 
-        var content = getContent(req.uri) catch unreachable;
-        var msg: []const u8 = "OK";
-
-        var res = Response{
-            .status_code = 200,
-            .status_message = &msg,
-            .body = &content,
-        };
+        var res = getResponse(req.uri) catch unreachable;
 
         var response_string = res.asString() catch unreachable;
         _ = client.context.file.write(response_string) catch unreachable;
         client.context.file.close();
     }
 
-    fn getContent(file_path: []const u8) ![]const u8 {
+    fn getResponse(file_path: []const u8) !Response {
         const full_path: []const u8 = try std.fmt.allocPrint(std.heap.page_allocator, "www{}", .{file_path});
 
         std.debug.warn("{}\n", .{full_path});
 
-        const file = try std.fs.cwd().openFile(full_path, .{ .read = true });
+        const working_dir = std.fs.cwd();
+
+        const file = working_dir.openFile(full_path, .{ .read = true }) catch |e| {
+            return response.file_not_found;
+        };
+
         defer file.close();
 
         var size: usize = try file.getEndPos();
-        var s: []u8 = try std.heap.page_allocator.alloc(u8, size);
+        var body_buffer: []u8 = try std.heap.page_allocator.alloc(u8, size);
 
-        const bytesRead = try file.read(s);
-        if (bytesRead != size) {
+        const bytes_read = try file.read(body_buffer);
+        if (bytes_read != size) {
             return error.BadRequest;
         }
 
-        return s;
+        var msg: []const u8 = "OK";
+
+        return Response{
+            .status_code = 200,
+            .status_message = msg,
+            .body = body_buffer,
+        };
     }
 };
