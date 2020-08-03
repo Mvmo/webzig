@@ -9,14 +9,13 @@ const Client = net.client.Client;
 const request = @import("request.zig");
 
 pub const HttpServer = struct {
-
     allocator: *Allocator,
     tcpServer: TcpServer,
 
     pub fn init(allocator: *Allocator) HttpServer {
-        return HttpServer {
+        return HttpServer{
             .allocator = allocator,
-            .tcpServer = TcpServer.init(allocator)
+            .tcpServer = TcpServer.init(allocator),
         };
     }
 
@@ -36,5 +35,4 @@ pub const HttpServer = struct {
         var req = request.Request.parse(message);
         std.debug.warn("Request: {}\n", .{req});
     }
-
 };

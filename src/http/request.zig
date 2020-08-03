@@ -16,7 +16,7 @@ pub const RequestMethod = enum(u8) {
     OPTIONS,
 };
 
-const request_method_string_mapping = [_]([]const u8) {
+const request_method_string_mapping = [_]([]const u8){
     "GET",
     "POST",
     "PUT",
@@ -34,9 +34,7 @@ pub const Request = struct {
 
     // TODO Error Handling
     pub fn parse(request_string: *const []u8) Request {
-        return Request {
-            .request_string = request_string
-        };
+        return Request{ .request_string = request_string };
     }
 };
 

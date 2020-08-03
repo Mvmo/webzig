@@ -10,9 +10,9 @@ pub const Client = struct {
     fn handle(self: *Client, server: *TcpServer) !void {
         var buffer: [comptime 1024 * 2]u8 = undefined;
         const bytes_read = try self.context.file.read(&buffer);
-        const message = buffer[0 .. bytes_read];
+        const message = buffer[0..bytes_read];
 
-        for (server.message_handlers.items) |handler| 
+        for (server.message_handlers.items) |handler|
             handler(self, &message);
     }
 };

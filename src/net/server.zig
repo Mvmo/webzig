@@ -7,7 +7,6 @@ const ArrayList = std.ArrayList;
 const Client = @import("client.zig").Client;
 
 pub const TcpServer = struct {
-
     const HandlerTypeSignature = fn (client: *Client, message: *const []u8) void;
 
     allocator: *mem.Allocator,
@@ -16,7 +15,7 @@ pub const TcpServer = struct {
     message_handlers: ArrayList(HandlerTypeSignature),
 
     pub fn init(allocator: *mem.Allocator) TcpServer {
-        return TcpServer {
+        return TcpServer{
             .allocator = allocator,
             .address = net.Address.parseIp4("127.0.0.1", 1888) catch unreachable,
             .stream_server = net.StreamServer.init(net.StreamServer.Options{}),
@@ -43,10 +42,9 @@ pub const TcpServer = struct {
             client.* = .{
                 .context = &connection,
                 .handle_frame = async client.handle(self),
-            };            
+            };
         }
     }
-
 };
 
 test "create server and listen" {
@@ -57,7 +55,7 @@ test "create server and listen" {
 
     try server.addHandler(test_handler);
 
-    std.debug.warn("Listening on Port {}\n", .{ server.address.getPort() });
+    std.debug.warn("Listening on Port {}\n", .{server.address.getPort()});
 
     _ = try server.listen();
 }
