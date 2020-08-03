@@ -15,13 +15,4 @@ pub fn build(b: *Builder) void {
 
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
-
-    {
-        const tests = b.addTest("src/tests.zig");
-        tests.setTarget(target);
-        tests.setBuildMode(mode);
-        
-        const test_step = b.step("test", "Run the tests");
-        test_step.dependOn(&tests.step);
-    }
 }
