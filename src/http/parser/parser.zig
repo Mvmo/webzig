@@ -1,5 +1,7 @@
 const std = @import("std");
 
+pub const request = @import("request_parser.zig");
+
 pub fn isWhitespace(c: u8) bool {
     return c == ' ' or c == '\t';
 }
