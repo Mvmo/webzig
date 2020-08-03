@@ -1,11 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Webzig - Webserver</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .logo-container {
+            width: 25%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Hello, World!</h1>
+    <main id="app">
+        <div class="logo-container">
+            <img class="main" src="https://ziglang.org/img/zig-logo-dark.svg" />
+            <h1>This page got served by webzig</h1>
+            <h3>with &hearts; by Maurice Schmidt</h3>
+        </div>
+    </main>
 </body>
+
 </html>
