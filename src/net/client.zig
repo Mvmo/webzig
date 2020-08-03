@@ -13,7 +13,7 @@ pub const Client = struct {
         var message: []const u8 = buffer[0..bytes_read];
 
         for (server.message_handlers.items) |handler|
-            handler(self, message);
+            handler(self, &message);
     }
 
     fn write(self: *Client, bytes: []const u8) !void {
