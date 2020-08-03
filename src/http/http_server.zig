@@ -34,7 +34,7 @@ pub const HttpServer = struct {
         try self.tcpServer.listen();
     }
 
-    fn handleMessage(client: *Client, message: *[]const u8) void {
+    fn handleMessage(client: *Client, message: []const u8) void {
         // std.debug.warn("Handle incoming message from client\n--- START ---\n{}\n---  END  ---\n", .{message.*});
         var req = parser.request.parse(message) catch unreachable;
         req.print();
@@ -55,14 +55,6 @@ pub const HttpServer = struct {
 
     fn getContent(file_path: []const u8) ![]const u8 {
         const full_path: []const u8 = try std.fmt.allocPrint(std.heap.page_allocator, "www{}", .{file_path});
-        //var full_path: []u8 = std.heap.page_allocator.alloc(u8, "www".len + file_path.len) catch unreachable;
-
-      //  var i: u8 = 0;
-        //while (i < 3) : (i += 1)
-          //  full_path[i] = 'w';
-
-        //for (file_path) |*c, index|
-         //   full_path[3 + index] = file_path[index];
 
         std.debug.warn("{}\n", .{full_path});
 
