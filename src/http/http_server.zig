@@ -40,32 +40,31 @@ pub const HttpServer = struct {
         var req = parser.request.parse(message) catch unreachable;
         req.print();
 
-        var res = getResponse(req.uri) catch unreachable;
+        var res = getResponse(req.uri);
 
         var response_string = res.asString() catch unreachable;
         _ = client.context.file.write(response_string) catch unreachable;
         client.context.file.close();
     }
 
-    fn getResponse(file_path: []const u8) !Response {
-        const full_path: []const u8 = try std.fmt.allocPrint(std.heap.page_allocator, "www{}", .{file_path});
+    fn getResponse(file_path: []const u8) Response {
+        const full_path: []const u8 = std.fmt.allocPrint(std.heap.page_allocator, "www{}", .{file_path}) catch |_| return response.internal_server_error;
 
         std.debug.warn("{}\n", .{full_path});
 
         const working_dir = std.fs.cwd();
 
-        const file = working_dir.openFile(full_path, .{ .read = true }) catch |e| {
-            return response.file_not_found;
-        };
+        // TODO check error type...
+        const file = working_dir.openFile(full_path, .{ .read = true }) catch |_| return response.file_not_found;
 
         defer file.close();
 
-        var size: usize = try file.getEndPos();
-        var body_buffer: []u8 = try std.heap.page_allocator.alloc(u8, size);
+        var size: usize = file.getEndPos() catch |_| return response.internal_server_error;
+        var body_buffer: []u8 = std.heap.page_allocator.alloc(u8, size) catch |_| return response.internal_server_error;
 
-        const bytes_read = try file.read(body_buffer);
+        const bytes_read = file.read(body_buffer) catch |_| return response.internal_server_error;
         if (bytes_read != size) {
-            return error.BadRequest;
+            return response.internal_server_error;
         }
 
         var msg: []const u8 = "OK";
