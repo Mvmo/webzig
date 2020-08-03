@@ -15,4 +15,8 @@ pub const Client = struct {
         for (server.message_handlers.items) |handler|
             handler(self, &message);
     }
+
+    fn write(self: *Client, bytes: []const u8) !void {
+        self.context.file.writeAll(bytes);
+    }
 };
