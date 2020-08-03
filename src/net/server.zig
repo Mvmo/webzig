@@ -7,7 +7,7 @@ const ArrayList = std.ArrayList;
 const Client = @import("client.zig").Client;
 
 pub const TcpServer = struct {
-    const HandlerTypeSignature = fn (client: *Client, message: *[]const u8) void;
+    const HandlerTypeSignature = fn (client: *Client, message: []const u8) void;
 
     allocator: *mem.Allocator,
     address: net.Address,

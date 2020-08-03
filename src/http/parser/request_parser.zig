@@ -26,8 +26,8 @@ pub const Request = struct {
     }
 };
 
-pub fn parse(input: *String) !Request {
-    const request_line = readLine(input.*) orelse return error.BadRequest;
+pub fn parse(input: String) !Request {
+    const request_line = readLine(input) orelse return error.BadRequest;
     const method = try readToken(request_line);
     const uri = try readToken(request_line[method.len + 1 ..]);
     const version = try readToken(request_line[method.len + uri.len + 2 ..]);
