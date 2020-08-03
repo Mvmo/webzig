@@ -17,7 +17,7 @@ pub const TcpServer = struct {
     pub fn init(allocator: *mem.Allocator) TcpServer {
         return TcpServer{
             .allocator = allocator,
-            .address = net.Address.parseIp4("127.0.0.1", 1888) catch unreachable,
+            .address = net.Address.parseIp4("127.0.0.1", 80) catch unreachable,
             .stream_server = net.StreamServer.init(net.StreamServer.Options{}),
             .message_handlers = ArrayList(HandlerTypeSignature).init(allocator),
         };
