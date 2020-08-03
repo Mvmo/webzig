@@ -27,15 +27,5 @@ const request_method_string_mapping = [_]([]const u8){
     "OPTIONS",
 };
 
-pub const Request = struct {
-    request_string: *const []u8,
-    method: RequestMethod,
-    request_url: *const []u8,
-
-    // TODO Error Handling
-    pub fn parse(request_string: *const []u8) Request {
-        return Request{ .request_string = request_string };
-    }
-};
 
 const allocator = std.heap.page_allocator;

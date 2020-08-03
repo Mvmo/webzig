@@ -46,16 +46,3 @@ pub const TcpServer = struct {
         }
     }
 };
-
-test "create server and listen" {
-    const allocator = std.heap.page_allocator;
-    var server = TcpServer.init(allocator);
-
-    defer server.deinit();
-
-    try server.addHandler(test_handler);
-
-    std.debug.warn("Listening on Port {}\n", .{server.address.getPort()});
-
-    _ = try server.listen();
-}
