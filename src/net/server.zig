@@ -7,19 +7,19 @@ const ArrayList = std.ArrayList;
 const Client = @import("client.zig").Client;
 
 pub const TcpServer = struct {
-    const HandlerTypeSignature = fn (client: *Client, message: []const u8) void;
+    const HandlerType = fn (client: *Client, message: []const u8) void;
 
     allocator: *mem.Allocator,
     address: net.Address,
     stream_server: net.StreamServer,
-    message_handlers: ArrayList(HandlerTypeSignature),
+    message_handlers: ArrayList(HandlerType),
 
     pub fn init(allocator: *mem.Allocator) TcpServer {
         return TcpServer{
             .allocator = allocator,
             .address = net.Address.parseIp4("127.0.0.1", 80) catch unreachable,
             .stream_server = net.StreamServer.init(net.StreamServer.Options{}),
-            .message_handlers = ArrayList(HandlerTypeSignature).init(allocator),
+            .message_handlers = ArrayList(HandlerType).init(allocator),
         };
     }
 
@@ -28,7 +28,7 @@ pub const TcpServer = struct {
         self.* = undefined;
     }
 
-    fn addHandler(self: *TcpServer, handler_function: HandlerTypeSignature) !void {
+    fn addHandler(self: *TcpServer, handler_function: HandlerType) !void {
         try self.message_handlers.append(handler_function);
     }
 
